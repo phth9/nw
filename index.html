@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <script src="https://content.jwplatform.com/libraries/r2cr6BE6.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        html,
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100%
+        }
+
+        #http {
+            width: 100%!important;
+            height: 100%!important;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .jw-icon.jw-icon-rewind.jw-button-color.jw-reset {
+            visibility: hidden
+        }
+
+        .jw-flag-small-player .jw-nextup-container,
+        .jw-flag-small-player .jw-nextup-container .jw-nextup,
+        .jw-icon-cc,
+        .jw-icon.jw-icon-inline.jw-button-color.jw-reset.jw-icon-rewind,
+        .jw-icon.jw-icon-inline.jw-button-color.jw-reset.jw-icon-rewind.jw-icon-next {
+            display: none!important
+        }
+    </style>
+</head>
+<body>
+    <div id="http"></div>
+    <script>
+function getPercent(e) {
+    if (e === "show") {
+        let displayIcon = document.querySelector(".jw-display-icon-display");
+        if (displayIcon) {
+            displayIcon.style.background = "#00000045";
+            displayIcon.style["border-radius"] = "10000%";
+            let existingPercent = document.querySelector(".jw-display-icon-display span#SoTrymPercent");
+            if (!existingPercent) {
+                displayIcon.insertAdjacentHTML("afterbegin", '<span id="SoTrymPercent" class="jw-icon" style="position:absolute;font-weight:bold; animation: none;"></span>');
+            }
+            let elmPercent = document.querySelector(".jw-display-icon-display span#SoTrymPercent");
+            if (elmPercent) {
+                elmPercent.hidden = !document.querySelector(".jw-state-buffering");
+                elmPercent.style.display = null;
+                elmPercent.hidden = false;
+            }
+        }
+    } else if (e === "hide") {
+        let elmPercent = document.querySelector(".jw-display-icon-display span#SoTrymPercent");
+        if (elmPercent) {
+            elmPercent.style.display = "none";
+            elmPercent.hidden = true;
+        }
+    }
+    if (document.querySelector(".jw-display-icon-display span#SoTrymPercent").hidden) {
+        let i = 1;
+        let intervalId = setInterval(() => {
+            i = this.fileStream ? this.fileStream.percent++ : i;
+            let elmPercent = document.querySelector(".jw-display-icon-display span#SoTrymPercent");
+            if (elmPercent) {
+                elmPercent.innerText = (i < 10 ? "0" : "") + i + "%";
+                let r = 10;
+                let n = Math.floor(i / 10);
+                if (n) r = 10 * n;
+                if (n >= 10) r += 10;
+                if (i >= 98) this.fileStream.percent = 99;
+                if (i >= 99) clearInterval(intervalId);
+            }
+        }, 10);
+    }
+}
+function reloadVideo() {
+    this.fileStream = { percent: 0 }; 
+    loadVideo();
+}
+function loadVideo() {
+    let a = new URLSearchParams(window.location.search).get('v');
+    let tbParam = new URLSearchParams(window.location.search).get('tb');
+    let b = new XMLHttpRequest();
+    let c = "http";
+
+    if (a) {
+        b.open("POST", "create?t=" + new Date().getTime());
+        b.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        b.onreadystatechange = function() {
+            if (b.readyState === 4) {
+                if (b.status === 200) {
+                    let d = JSON.parse(b.responseText.split(' ').map(binary => String.fromCharCode(parseInt(binary, 2))).join(''));
+                    let e = [{
+                            file: "googleapis/" + atob(d.ios_super) + "?token=" + atob(d.android_superid) + "&mode=high" + "&dcs=" + atob(atob(atob(atob(atob(atob(atob(atob(atob(atob(d.device)))))))))),
+                            type: "mp4",
+                            label: "High"
+                        },
+                        {
+                            file: "googleapis/" + atob(d.ios_super) + "?token=" + atob(d.android_superid) + "&mode=normal" + "&dcs=" + atob(atob(atob(atob(atob(atob(atob(atob(atob(atob(d.device)))))))))),
+                            type: "mp4",
+                            label: "Normal"
+                        },
+                        {
+                            file: "googleapis/" + atob(d.ios_super) + "?token=" + atob(d.android_superid) + "&dcs=" + atob(atob(atob(atob(atob(atob(atob(atob(atob(atob(d.device)))))))))),
+                            type: "mp4",
+                            label: "Low"
+                        }
+                    ];
+                    let f = "100%";
+                    let g = "original";
+                    let h = false;
+                    let j = [0.5, 1, 1.5];
+                    let k = true;
+                    let firstPlay = true;
+                    let playerSetup = {
+                        sources: e,
+                        width: f,
+                        aspectratio: g,
+                        displaytitle: h,
+                        autostart: false,
+                        playbackRateControls: j,
+                        title: a,
+                        controls: k,
+                        abouttext: "VOD - Doraemon Vietnam Fansub",
+                        aboutlink: "https://doraemonvietnamfs.blogspot.com"
+                    };
+                    if (tbParam && tbParam.trim() !== '') {
+                        playerSetup.image = tbParam;
+                    }
+                    if (d.ios_super) {
+                        jwplayer(c).setup(playerSetup);
+                        jwplayer(c).on('play', function() {
+                            if (firstPlay) {
+                                let l = localStorage.getItem('hjs&' + a);
+                                if (l) {
+                                    jwplayer(c).seek(l);
+                                    firstPlay = false;
+                                }
+                            }
+                        });
+                        jwplayer(c).on('time', function(i) {
+                            localStorage.setItem('hjs&' + a, i.position);
+                        });
+                        jwplayer(c).addButton('<svg xmlns="http://www.w3.org/2000/svg" class="jw-svg-icon jw-svg-icon-rewind2" viewBox="0 0 240 240" focusable="false"><path d="m 25.993957,57.778 v 125.3 c 0.03604,2.63589 2.164107,4.76396 4.8,4.8 h 62.7 v -19.3 h -48.2 v -96.4 H 160.99396 v 19.3 c 0,5.3 3.6,7.2 8,4.3 l 41.8,-27.9 c 2.93574,-1.480087 4.13843,-5.04363 2.7,-8 -0.57502,-1.174985 -1.52502,-2.124979 -2.7,-2.7 l -41.8,-27.9 c -4.4,-2.9 -8,-1 -8,4.3 v 19.3 H 30.893957 c -2.689569,0.03972 -4.860275,2.210431 -4.9,4.9 z m 163.422413,73.04577 c -3.72072,-6.30626 -10.38421,-10.29683 -17.7,-10.6 -7.31579,0.30317 -13.97928,4.29374 -17.7,10.6 -8.60009,14.23525 -8.60009,32.06475 0,46.3 3.72072,6.30626 10.38421,10.29683 17.7,10.6 7.31579,-0.30317 13.97928,-4.29374 17.7,-10.6 8.60009,-14.23525 8.60009,-32.06475 0,-46.3 z m -17.7,47.2 c -7.8,0 -14.4,-11 -14.4,-24.1 0,-13.1 6.6,-24.1 14.4,-24.1 7.8,0 14.4,11 14.4,24.1 0,13.1 -6.5,24.1 -14.4,24.1 z m -47.77056,9.72863 v -51 l -4.8,4.8 -6.8,-6.8 13,-12.99999 c 3.02543,-3.03598 8.21053,-0.88605 8.2,3.4 v 62.69999 z"></path></svg>', "Forward", function() {
+                            jwplayer(c).seek(jwplayer(c).getPosition() + 10);
+                        }, "Forward");
+                        jwplayer(c).addButton('<svg xmlns="http://www.w3.org/2000/svg" class="jw-svg-icon jw-svg-icon-rewind" viewBox="0 0 240 240" focusable="false"><path d="M113.2,131.078a21.589,21.589,0,0,0-17.7-10.6,21.589,21.589,0,0,0-17.7,10.6,44.769,44.769,0,0,0,0,46.3,21.589,21.589,0,0,0,17.7,10.6,21.589,21.589,0,0,0,17.7-10.6,44.769,44.769,0,0,0,0-46.3Zm-17.7,47.2c-7.8,0-14.4-11-14.4-24.1s6.6-24.1,14.4-24.1,14.4,11,14.4,24.1S103.4,178.278,95.5,178.278Zm-43.4,9.7v-51l-4.8,4.8-6.8-6.8,13-13a4.8,4.8,0,0,1,8.2,3.4v62.7l-9.6-.1Zm162-130.2v125.3a4.867,4.867,0,0,1-4.8,4.8H146.6v-19.3h48.2v-96.4H79.1v19.3c0,5.3-3.6,7.2-8,4.3l-41.8-27.9a6.013,6.013,0,0,1-2.7-8,5.887,5.887,0,0,1,2.7-2.7l41.8-27.9c4.4-2.9,8-1,8,4.3v19.3H209.2A4.974,4.974,0,0,1,214.1,57.778Z"></path></svg>', "Rewind", function() {
+                            jwplayer(c).seek(jwplayer(c).getPosition() - 10);
+                        }, "Rewind");
+
+                        jwplayer(c).on("buffer", function() {
+                            getPercent.call({
+                                fileStream: {
+                                    percent: 1
+                                }
+                            }, "show");
+                        });
+                        jwplayer(c).on("play", function() {
+                            getPercent.call({
+                                fileStream: {
+                                    percent: 0
+                                }
+                            }, "hide");
+                        });
+                    } else {
+                        document.getElementById("http").innerHTML = "Video Hydrax is still being processed or does not exist";
+                    }
+                } else {
+                    document.getElementById("http").innerHTML = "Error: Unable to load video";
+                }
+            }
+        };
+        b.send("id=" + a);
+    } else {
+        document.getElementById("http").style.display = "block";
+    }
+}
+loadVideo();
+    </script>
+</body>
+
+</html>
