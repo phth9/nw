@@ -10,7 +10,6 @@
             margin: 0;
             height: 100%
         }
-
         #http {
             width: 100%!important;
             height: 100%!important;
@@ -22,11 +21,9 @@
             align-items: center;
             justify-content: center
         }
-
         .jw-icon.jw-icon-rewind.jw-button-color.jw-reset {
             visibility: hidden
         }
-
         .jw-flag-small-player .jw-nextup-container,
         .jw-flag-small-player .jw-nextup-container .jw-nextup,
         .jw-icon-cc,
@@ -100,17 +97,17 @@ function loadVideo() {
                     let e = [{
                             file: "googleapis/" + atob(d.ios_super) + "?token=" + atob(d.android_superid) + "&mode=high" + "&dcs=" + atob(atob(atob(atob(atob(atob(atob(atob(atob(atob(d.device)))))))))),
                             type: "mp4",
-                            label: "High"
+                            label: "FHD"
                         },
                         {
                             file: "googleapis/" + atob(d.ios_super) + "?token=" + atob(d.android_superid) + "&mode=normal" + "&dcs=" + atob(atob(atob(atob(atob(atob(atob(atob(atob(atob(d.device)))))))))),
                             type: "mp4",
-                            label: "Normal"
+                            label: "HD"
                         },
                         {
                             file: "googleapis/" + atob(d.ios_super) + "?token=" + atob(d.android_superid) + "&dcs=" + atob(atob(atob(atob(atob(atob(atob(atob(atob(atob(d.device)))))))))),
                             type: "mp4",
-                            label: "Low"
+                            label: "SD"
                         }
                     ];
                     let f = "100%";
@@ -185,5 +182,4 @@ function loadVideo() {
 loadVideo();
     </script>
 </body>
-
 </html>
